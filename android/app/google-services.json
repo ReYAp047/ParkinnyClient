@@ -1,0 +1,39 @@
+ {
+  "project_info": {
+    "project_number": "879793099107",
+    "project_id": "fir-auth-da40e",
+    "storage_bucket": "fir-auth-da40e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879793099107:android:97b0e59c6608bfad328356",
+        "android_client_info": {
+          "package_name": "com.example.parkinny"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879793099107-qtv9qq331hdkh3p3gttgblsrtp0kk4a9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuJIP4pQdSoWT94ACCxJiNA0N0QYJxJek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879793099107-qtv9qq331hdkh3p3gttgblsrtp0kk4a9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
