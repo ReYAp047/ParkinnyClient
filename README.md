@@ -1,6 +1,6 @@
 # parkinny
 
-A park application developed by Mohamed Ali Meftah (T-Innover)
+A park application developed by Mohamed Ali Meftah for (T-Innover)
 
 ## Getting Started
 
