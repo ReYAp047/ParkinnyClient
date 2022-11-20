@@ -1,13 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onboard/flutter_onboard.dart';
-import 'package:parkinny/screen/connect_screen.dart';
+import 'package:parkinny/widget_tree.dart';
 
 
-void main() {
-  runApp(App());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
+  const App({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,6 +24,8 @@ class App extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   final PageController _pageController = PageController();
   static const customBlue =  Color(0xFF3F5CC5);
+
+  HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +62,7 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Connect_screen()),
+              MaterialPageRoute(builder: (context) => const WidgetTree()),
             );
           },
           child: const Text(
@@ -106,7 +113,7 @@ class HomeScreen extends StatelessWidget {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const Connect_screen()),
+        MaterialPageRoute(builder: (context) => const WidgetTree()),
       );
     }
   }
