@@ -41,6 +41,12 @@ dependencies:
   firebase_auth: ^3.5.0
   fluttertoast: ^8.1.1
 
+  #The following pack is related to the google maps and live track
+  flutter_polyline_points: ^1.0.0
+  google_maps_flutter: ^2.1.7
+  location: ^4.4.0
+  flutter_svg: ^1.1.0
+
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1

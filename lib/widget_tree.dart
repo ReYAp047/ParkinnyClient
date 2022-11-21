@@ -1,5 +1,5 @@
 import 'package:parkinny/auth.dart';
-import 'package:parkinny/screen/home_page.dart';
+import 'package:parkinny/screen/order_traking_page.dart';
 import 'package:parkinny/screen/login_register_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: Auth().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return HomePage();
+          return OrderTrackingPage();
         } else {
           return const LoginPage();
         }
