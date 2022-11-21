@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:location/location.dart';
 import 'package:parkinny/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -18,6 +19,17 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   static const LatLng destination = LatLng(37.33429383, -122.06600055);
 
   List<LatLng> polylinecordinates = [];
+  LocationData? currentLocation;
+
+  void getCurrentLocation () {
+    Location location = Location();
+
+    location.getLocation().then(
+            (location){
+              currentLocation = location;
+            }
+            );
+  }
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -39,6 +51,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   @override
   void initState(){
+    getCurrentLocation();
     getPolyPoints();
     super.initState();
   }
@@ -47,9 +60,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: GoogleMap(
+      body: currentLocation == null
+          ? const Center(child: Text("Chargement"))
+          : GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: sourceLocation,
+          target: LatLng(
+              currentLocation!.latitude!, currentLocation!.longitude!),
           zoom: 12.5,
       ),
         polylines: {
@@ -61,6 +77,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ),
         },
         markers: {
+           Marker(
+              markerId: const MarkerId("currentLocation"),
+              position: LatLng(
+                  currentLocation!.latitude!, currentLocation!.longitude!)
+          ),
          const Marker(
             markerId: MarkerId("source"),
             position: sourceLocation
