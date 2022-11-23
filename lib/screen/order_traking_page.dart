@@ -15,20 +15,64 @@ class OrderTrackingPage extends StatefulWidget {
 class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static const LatLng sourceLocation = LatLng(37.33500926, -122.03272188);
-  static const LatLng destination = LatLng(37.33429383, -122.06600055);
+  static const LatLng sourceLocation = LatLng(37.4221, -122.0841);
+  static const LatLng destination = LatLng(37.4116, -122.0713);
 
   List<LatLng> polylinecordinates = [];
   LocationData? currentLocation;
 
-  void getCurrentLocation () {
+  BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
+
+  void getCurrentLocation () async {
     Location location = Location();
+
 
     location.getLocation().then(
             (location){
               currentLocation = location;
             }
             );
+
+    GoogleMapController googleMapController = await _controller.future;
+
+
+    location.onLocationChanged.listen((newLoc) {
+      currentLocation = newLoc;
+
+      googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        zoom: 13.5,
+          target: LatLng(
+            newLoc.latitude!,
+            newLoc.longitude!,
+          )),
+      ),
+      );
+      
+      setState(() {});
+    });
+  }
+
+  void setCustomMarkerIcon(){
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, "assets/sourceIcon.png")
+        .then(
+            (icon) {
+          sourceIcon = icon;
+    });
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, "assets/LogoP_ugwynb.png")
+        .then(
+            (icon) {
+          destinationIcon = icon;
+        });
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty, "assets/curerrentLocation.png")
+        .then(
+            (icon) {
+          currentLocationIcon = icon;
+        });
   }
 
   void getPolyPoints() async {
@@ -52,6 +96,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   @override
   void initState(){
     getCurrentLocation();
+    setCustomMarkerIcon();
     getPolyPoints();
     super.initState();
   }
@@ -66,11 +111,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         initialCameraPosition: CameraPosition(
           target: LatLng(
               currentLocation!.latitude!, currentLocation!.longitude!),
-          zoom: 12.5,
+          zoom: 13.5,
       ),
         polylines: {
           Polyline(
-            polylineId: PolylineId("route"),
+            polylineId: const PolylineId("route"),
             points: polylinecordinates,
             color: primaryColor,
             width: 6
@@ -79,17 +124,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         markers: {
            Marker(
               markerId: const MarkerId("currentLocation"),
+              //icon: currentLocationIcon,
               position: LatLng(
                   currentLocation!.latitude!, currentLocation!.longitude!)
           ),
-         const Marker(
+          const Marker(
+           //icon: sourceIcon,
             markerId: MarkerId("source"),
             position: sourceLocation
           ),
           const Marker(
+              //icon: destinationIcon,
               markerId: MarkerId("destination"),
               position: destination
           ),
+        },
+        onMapCreated: (mapController){
+          _controller.complete(mapController);
         },
       ),
     );
