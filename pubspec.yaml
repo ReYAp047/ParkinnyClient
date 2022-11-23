@@ -78,6 +78,9 @@ flutter:
      - assets/E-Wallet-bro.png
      - assets/hello.png
      - assets/Order ride-amico.png
+     - assets/curerrentLocation.png
+     - assets/LogoP_ugwynb.png
+     - assets/sourceIcon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

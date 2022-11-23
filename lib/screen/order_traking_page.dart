@@ -42,7 +42,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       currentLocation = newLoc;
 
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        zoom: 13.5,
+        zoom: 14.5,
           target: LatLng(
             newLoc.latitude!,
             newLoc.longitude!,
@@ -54,7 +54,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     });
   }
 
-  void setCustomMarkerIcon(){
+  void setCustomMarkerIcon() {
     BitmapDescriptor.fromAssetImage(
         ImageConfiguration.empty, "assets/sourceIcon.png")
         .then(
@@ -111,7 +111,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         initialCameraPosition: CameraPosition(
           target: LatLng(
               currentLocation!.latitude!, currentLocation!.longitude!),
-          zoom: 13.5,
+          zoom: 14.5,
       ),
         polylines: {
           Polyline(
@@ -124,18 +124,18 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         markers: {
            Marker(
               markerId: const MarkerId("currentLocation"),
-              //icon: currentLocationIcon,
+              icon: currentLocationIcon,
               position: LatLng(
                   currentLocation!.latitude!, currentLocation!.longitude!)
           ),
-          const Marker(
-           //icon: sourceIcon,
-            markerId: MarkerId("source"),
+           Marker(
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+            markerId: const MarkerId("source"),
             position: sourceLocation
           ),
-          const Marker(
-              //icon: destinationIcon,
-              markerId: MarkerId("destination"),
+           Marker(
+              icon: destinationIcon,
+              markerId: const MarkerId("destination"),
               position: destination
           ),
         },
