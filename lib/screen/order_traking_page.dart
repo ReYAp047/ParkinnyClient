@@ -33,6 +33,42 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     LatLng(36.860009, 10.181437),
   ];
 
+  List<LatLng> zone1 = const[
+    LatLng(36.858104, 10.187180),
+    LatLng(36.858026, 10.186282),
+  ];
+  List<LatLng> zone2 = const[
+    LatLng(36.857996, 10.185089),
+    LatLng(36.856067, 10.185606),
+  ];
+  List<LatLng> zone3 = const[
+    LatLng(36.856935, 10.187526),
+    LatLng(36.856947, 10.185532),
+  ];
+  List<LatLng> zone4 = const[
+    LatLng(36.855151, 10.185584),
+    LatLng(36.854072, 10.182704),
+  ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   void getCurrentLocation () async {
     Location location = Location();
 
@@ -50,7 +86,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       currentLocation = newLoc;
 
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        zoom: 14.5,
+        zoom: 15.5,
           target: LatLng(
             newLoc.latitude!,
             newLoc.longitude!,
@@ -119,7 +155,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         initialCameraPosition: CameraPosition(
           target: LatLng(
               currentLocation!.latitude!, currentLocation!.longitude!),
-          zoom: 14.5,
+          zoom: 15.5,
       ),
         polylines: {
           Polyline(
@@ -161,13 +197,43 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           },*/
         polygons: {
           Polygon(
-            polygonId: const PolygonId("1"),
+            polygonId: const PolygonId("0"),
             points: polygonPoints,
             strokeWidth: 2,
+            strokeColor: const Color(0xFF006491).withOpacity(0.7),
+            fillColor: const Color(0xFF006491).withOpacity(0.05),
+          ),
+          Polygon(
+            polygonId: const PolygonId("1"),
+            points: zone1,
+            strokeWidth: 4,
             strokeColor: const Color(0xFF006491),
-            fillColor: const Color(0xFF006491).withOpacity(0.2),
-          )
+            fillColor: const Color(0xFF006491),
+          ),
+          Polygon(
+            polygonId: const PolygonId("2"),
+            points: zone2,
+            strokeWidth: 4,
+            strokeColor: const Color(0xFF006491),
+            fillColor: const Color(0xFF006491),
+          ),
+          Polygon(
+            polygonId: const PolygonId("3"),
+            points: zone3,
+            strokeWidth: 4,
+            strokeColor: const Color(0xFF006491),
+            fillColor: const Color(0xFF006491),
+          ),
+          Polygon(
+            polygonId: const PolygonId("4"),
+            points: zone4,
+            strokeWidth: 4,
+            strokeColor: const Color(0xFF006491),
+            fillColor: const Color(0xFF006491),
+          ),
+
         },
+
         onMapCreated: (mapController){
           _controller.complete(mapController);
         },
@@ -175,3 +241,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     );
   }
 }
+
+
+
+
+
