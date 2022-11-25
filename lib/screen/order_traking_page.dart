@@ -4,6 +4,7 @@ import 'package:parkinny/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps_toolkit/maps_toolkit.dart' as map_tool;
 
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
   static const LatLng sourceLocation = LatLng(36.8978, 10.1901);
-  static const LatLng destination = LatLng(36.8580, 10.1844);
+  static LatLng destination = LatLng(36.8580, 10.1844);
 
   List<LatLng> polylinecordinates = [];
   LocationData? currentLocation;
@@ -50,24 +51,27 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     LatLng(36.854072, 10.182704),
   ];
 
+  bool isFirstPoly = true;
 
+  bool isSelectedArea = true;
 
+  void checkUpdatedLocation(LatLng pointLatLng) {
+    setState(() {
+      polylinecordinates.clear();
+      destination = pointLatLng;
+      getPolyPoints();
 
+      List<map_tool.LatLng> convertedPolygonPoints = polygonPoints.map(
+              (point) => map_tool.LatLng(point.latitude,point.longitude)
+      ).toList();
+      isSelectedArea = map_tool.PolygonUtil.containsLocation(
+          map_tool.LatLng(pointLatLng.latitude, pointLatLng.longitude),
+          convertedPolygonPoints,
+          false,
+      );
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }
 
   void getCurrentLocation () async {
     Location location = Location();
@@ -121,7 +125,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
-
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         google_api_key,
         PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
@@ -180,7 +183,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
            Marker(
               icon: destinationIcon,
               markerId: const MarkerId("destination"),
-              position: destination
+              position: destination,
+             draggable: true,
+             onDragEnd: (updatedLatLng){
+                checkUpdatedLocation(updatedLatLng);
+             },
           ),
         },
         /*
