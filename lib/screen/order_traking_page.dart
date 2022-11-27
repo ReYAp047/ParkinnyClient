@@ -51,12 +51,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     LatLng(36.854072, 10.182704),
   ];
 
-  bool isFirstPoly = true;
 
   bool isSelectedArea = true;
 
   void checkUpdatedLocation(LatLng pointLatLng) {
     setState(() {
+      //mise a jour de l'iténéraire
       polylinecordinates.clear();
       destination = pointLatLng;
       getPolyPoints();
@@ -151,7 +151,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: currentLocation == null
           ? const Center(child: Text("Chargement"))
           : GoogleMap(
@@ -240,13 +240,24 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ),
 
         },
-
         onMapCreated: (mapController){
           _controller.complete(mapController);
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: isSelectedArea ? () => submitData : null, //<-- SEE HERE
+
+        label: const Text('Confirmer la réservation'),
+        icon: const Icon(Icons.data_saver_on_rounded),
+        backgroundColor: isSelectedArea ? Color(0xFF006491) : Colors.grey,
+
+      ),
     );
   }
+}
+
+submitData() {
+  // Do something here
 }
 
 
