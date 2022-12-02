@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as map_tool;
+import 'package:parkinny/screen/wallet_screen.dart';
 
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
   static const LatLng sourceLocation = LatLng(36.8978, 10.1901);
-  static LatLng destination = LatLng(36.8580, 10.1844);
+  static LatLng destination = const LatLng(36.8580, 10.1844);
 
   List<LatLng> polylinecordinates = [];
   LocationData? currentLocation;
@@ -55,6 +56,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   bool isSelectedArea = true;
 
+  bool follow = false;
+
   void checkUpdatedLocation(LatLng pointLatLng) {
     setState(() {
       //mise a jour de l'iténéraire
@@ -86,19 +89,25 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
     GoogleMapController googleMapController = await _controller.future;
 
+    if(follow){
+      followCurrentLocation(location, googleMapController );
+    }
 
+  }
+  
+  void followCurrentLocation(Location location, GoogleMapController googleMapController){
     location.onLocationChanged.listen((newLoc) {
       currentLocation = newLoc;
 
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        zoom: 15.5,
+          zoom: 15.5,
           target: LatLng(
             newLoc.latitude!,
             newLoc.longitude!,
           )),
       ),
       );
-      
+
       setState(() {});
     });
   }
@@ -255,65 +264,78 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       ),
     );
   }
-}
-
-submitData(context) async {
-  final TimeOfDay? newTime = await showTimePicker(
-    context: context,
-    initialTime: const TimeOfDay(hour: 7, minute: 15),
-  );
-  if(newTime != null){
-    final now = DateTime.now();
+  submitData(context) async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 7, minute: 15),
+    );
+    if(newTime != null){
+      final now = DateTime.now();
 
 
-    DateTime t = DateTime(now.year, now.month, now.day, newTime.hour, newTime.minute);
-    final difference = t.difference(now);
-    String time = "${now.hour}:${now.minute}";
-    String timeUntil = "${newTime.hour}:${newTime.minute}";
+      DateTime t = DateTime(now.year, now.month, now.day, newTime.hour, newTime.minute);
+      final difference = t.difference(now);
+      String time = "${now.hour}:${now.minute}";
+      String timeUntil = "${newTime.hour}:${newTime.minute}";
 
-    String formattedMsgDate = "De: $time";
-    String formattedMsgNewTime = "À: $timeUntil";
-    int diff = difference.inHours.toInt()+1;
-    String formattedTime = "Dureé: $diff heurs";
-    int total = diff * 3;
-    String formattedPriceMsg = "Total a payer: $total DINAR";
+      String formattedMsgDate = "De: $time";
+      String formattedMsgNewTime = "À: $timeUntil";
+      int diff = difference.inHours.toInt()+1;
+      String formattedTime = "Dureé: $diff heurs";
+      int total = diff * 3;
+      String formattedPriceMsg = "Total a payer: $total DINAR";
 
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Validation du réservation'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text(formattedMsgDate),
-                  Text(formattedMsgNewTime),
-                  Text(formattedTime),
-                  Text(formattedPriceMsg)
-                ],
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Validation du réservation'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(formattedMsgDate),
+                    Text(formattedMsgNewTime),
+                    Text(formattedTime),
+                    Text(formattedPriceMsg)
+                  ],
+                ),
               ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Valider'),
-                onPressed: () {
+              actions: <Widget>[
 
-                },
-              ),
-              TextButton(
-                child: const Text('Annuler'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
+                TextButton(
+                  child: const Text('Annuler'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Valider'),
+                  onPressed: () {
+                    Fluttertoast.showToast(
+                        msg: "Réservation effectué avec succes",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white,
+                        fontSize: 16.0
+                    );
+                    follow = true;
+                    getCurrentLocation();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
 
 
 
+    }
   }
 }
+
+
 
 
 
