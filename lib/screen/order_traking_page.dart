@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:location/location.dart';
 import 'package:parkinny/constants.dart';
 import 'package:flutter/material.dart';
@@ -245,19 +246,73 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: isSelectedArea ? () => submitData : null, //<-- SEE HERE
+        onPressed: isSelectedArea ? () => submitData(context) : null, //<-- SEE HERE
 
         label: const Text('Confirmer la réservation'),
         icon: const Icon(Icons.data_saver_on_rounded),
-        backgroundColor: isSelectedArea ? Color(0xFF006491) : Colors.grey,
+        backgroundColor: isSelectedArea ? const Color(0xFF006491) : Colors.grey,
 
       ),
     );
   }
 }
 
-submitData() {
-  // Do something here
+submitData(context) async {
+  final TimeOfDay? newTime = await showTimePicker(
+    context: context,
+    initialTime: const TimeOfDay(hour: 7, minute: 15),
+  );
+  if(newTime != null){
+    final now = DateTime.now();
+
+
+    DateTime t = DateTime(now.year, now.month, now.day, newTime.hour, newTime.minute);
+    final difference = t.difference(now);
+    String time = "${now.hour}:${now.minute}";
+    String timeUntil = "${newTime.hour}:${newTime.minute}";
+
+    String formattedMsgDate = "De: $time";
+    String formattedMsgNewTime = "À: $timeUntil";
+    int diff = difference.inHours.toInt()+1;
+    String formattedTime = "Dureé: $diff heurs";
+    int total = diff * 3;
+    String formattedPriceMsg = "Total a payer: $total DINAR";
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Validation du réservation'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(formattedMsgDate),
+                  Text(formattedMsgNewTime),
+                  Text(formattedTime),
+                  Text(formattedPriceMsg)
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Valider'),
+                onPressed: () {
+
+                },
+              ),
+              TextButton(
+                child: const Text('Annuler'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+
+
+
+  }
 }
 
 
