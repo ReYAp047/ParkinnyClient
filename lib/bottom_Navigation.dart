@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parkinny/screen/order_traking_page.dart';
 import 'package:parkinny/screen/wallet_screen.dart';
+import 'package:parkinny/screen/history_screen.dart';
 
 
 class bottom_Navigation extends StatelessWidget {
@@ -34,9 +35,8 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     Center(
       child: WalletScreen(),
     ),
-    Text(
-      'Index 2: Historique',
-      style: optionStyle,
+    Center(
+      child: HistoryScreen(),
     ),
   ];
 
