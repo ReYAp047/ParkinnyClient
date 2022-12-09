@@ -135,19 +135,35 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        google_api_key,
-        PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
-        PointLatLng(destination.latitude, destination.longitude),
+if(currentLocation != null){
+  PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+    google_api_key,
+    PointLatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+    PointLatLng(destination.latitude, destination.longitude),
+  );
+  if(result.points.isNotEmpty) {
+    result.points.forEach(
+            (PointLatLng point)=>polylinecordinates.add(
+            LatLng(point.latitude, point.longitude)
+        )
     );
-    if(result.points.isNotEmpty) {
-      result.points.forEach(
-              (PointLatLng point)=>polylinecordinates.add(
-                  LatLng(point.latitude, point.longitude)
-              )
-      );
-      setState(() {});
-    }
+    setState(() {});
+  }
+}else{
+  PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+    google_api_key,
+    PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
+    PointLatLng(destination.latitude, destination.longitude),
+  );
+  if(result.points.isNotEmpty) {
+    result.points.forEach(
+            (PointLatLng point)=>polylinecordinates.add(
+            LatLng(point.latitude, point.longitude)
+        )
+    );
+    setState(() {});
+  }
+}
   }
 
   @override

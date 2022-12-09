@@ -62,9 +62,13 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _submitButton() {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF3F5CC5),
+
+      ),
       onPressed:
       isLogin ? signInWithEmailAndPassword : createUserWithEmailAndPassword,
-      child: Text(isLogin ? 'Login' : 'Register'),
+      child: Text(isLogin ? '          Se connecter          ' : '        Créer compte        '),
     );
   }
 
@@ -75,29 +79,45 @@ class _LoginPageState extends State<LoginPage> {
           isLogin = !isLogin;
         });
       },
-      child: Text(isLogin ? 'Register instead' : 'Login instead'),
+      child: Text(isLogin ? 'Pas de compte?' : 'J\'ai un compte  '),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _title(),
-      ),
+
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+
           children: <Widget>[
+            const Padding(padding: EdgeInsets.all(15)),
+            const Text(
+              'Créer & connecter a votre compte',
+              style: TextStyle(
+                fontFamily: 'Roboto Mono',
+                color: Colors.grey,
+                fontSize: 20,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(8)),
+            Image.network(
+              'https://res.cloudinary.com/dhncrtnjp/image/upload/v1670396482/Privacy_policy-rafiki_2_zcvwwu.png',
+              width: 300,
+              height: 300,
+              fit: BoxFit.cover,
+            ),
             _entryField('email', _controllerEmail),
             _entryField('password', _controllerPassword),
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton(),
+
           ],
         ),
       ),
