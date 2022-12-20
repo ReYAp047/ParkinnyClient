@@ -107,7 +107,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           )),
       ),
       );
-
       setState(() {});
     });
   }
@@ -150,17 +149,18 @@ if(currentLocation != null){
     setState(() {});
   }
 }else{
+
   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
     google_api_key,
     PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
     PointLatLng(destination.latitude, destination.longitude),
   );
   if(result.points.isNotEmpty) {
-    result.points.forEach(
+   /* result.points.forEach(
             (PointLatLng point)=>polylinecordinates.add(
             LatLng(point.latitude, point.longitude)
         )
-    );
+    );*/
     setState(() {});
   }
 }
@@ -199,13 +199,16 @@ if(currentLocation != null){
               markerId: const MarkerId("currentLocation"),
               icon: currentLocationIcon,
               position: LatLng(
-                  currentLocation!.latitude!, currentLocation!.longitude!)
+                  currentLocation!.latitude!, currentLocation!.longitude!),
+             onDrag: (updatedLatLng){
+               checkUpdatedLocation(updatedLatLng);
+             },
           ),
-           Marker(
+          /* Marker(
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
             markerId: const MarkerId("source"),
             position: sourceLocation
-          ),
+          ),*/
            Marker(
               icon: destinationIcon,
               markerId: const MarkerId("destination"),
