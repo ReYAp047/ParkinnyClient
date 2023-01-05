@@ -7,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as map_tool;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:intl/intl.dart';
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
 
@@ -404,6 +405,7 @@ if(currentLocation != null){
     if(newTime != null){
       final now = DateTime.now();
 
+      String formattedDate = DateFormat('dd-MM-yyyy').format(now);
 
       DateTime t = DateTime(now.year, now.month, now.day, newTime.hour, newTime.minute);
       final difference = t.difference(now);
@@ -413,25 +415,66 @@ if(currentLocation != null){
       String formattedMsgDate = "De: $time";
       String formattedMsgNewTime = "À: $timeUntil";
       int diff = difference.inHours.toInt()+1;
-      String formattedTime = "Dureé: $diff heurs";
+      String formattedTime = "$diff heurs";
       int total = diff * 3;
-      String formattedPriceMsg = "Total a payer: $total DINAR";
+      String formattedPriceMsg = "$total DINAR";
 
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Validation du réservation'),
+              title: const Text('Ticket de réservation'),
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text(formattedMsgDate),
-                    Text(formattedMsgNewTime),
-                    Text(formattedTime),
-                    Text(formattedPriceMsg)
+                    Row(
+                      children: const [
+                        Icon(Icons.location_city),
+                        Text("Rue foulen 2024"),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today),
+                        Text(formattedDate),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.date_range),
+                        Text("$formattedMsgDate - $formattedMsgNewTime"),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.timer),
+                        Text(formattedTime),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.money),
+                        Text(formattedPriceMsg),
+                      ],
+                    ),
+                    Row(
+                      children: const [
+                        Icon(Icons.car_crash),
+                        Text('247 TN 9999'),
+                      ],
+                    ),
                   ],
                 ),
               ),
+
+
+
+
+
+
+
+
               actions: <Widget>[
 
                 TextButton(
@@ -467,7 +510,6 @@ if(currentLocation != null){
   }
 
   Widget searchBarUI(){
-
     return FloatingSearchBar(
       hint: 'Search...',
       openAxisAlignment: 0.0,
