@@ -289,6 +289,8 @@ class WalletWidget extends State<WalletScreen> {
               ],
             ),
             const Padding(padding: EdgeInsets.all(20)),
+
+            /*
             Row(
               children: [
                 Image.network(
@@ -342,7 +344,7 @@ class WalletWidget extends State<WalletScreen> {
                   ],
                 )
               ],
-            )
+            )*/
 
 
           ],
