@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as map_tool;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
 
@@ -107,6 +109,122 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   ];
 
 
+  List<LatLng> rue1 = const[
+    LatLng(36.8793889, 10.3331063),
+    LatLng(36.8791582, 10.3325393),
+  ];
+  List<LatLng> rue2 = const[
+    LatLng(36.8790577, 10.3323794),
+    LatLng(36.8788289, 10.3318343),
+  ];
+  List<LatLng> rue3 = const[
+    LatLng(36.8781448, 10.3332709),
+    LatLng(36.8780048, 10.3329501),
+  ];
+  List<LatLng> rue4 = const[
+    LatLng(36.8773769, 10.3290904),
+    LatLng(36.8771798, 10.3292147),
+  ];
+  List<LatLng> rue5 = const[
+    LatLng(36.8770664, 10.3293100),
+    LatLng(36.8767786, 10.3295101),
+  ];
+  List<LatLng> rue6 = const[
+    LatLng(36.8766018, 10.3296167),
+    LatLng(36.8760123, 10.3300124),
+  ];
+  List<LatLng> rue7 = const[
+    LatLng(36.8758688, 10.3301197),
+    LatLng(36.8756701, 10.3302437),
+  ];
+  List<LatLng> rue8 = const[
+    LatLng(36.8754051, 10.3304462),
+    LatLng(36.8741609, 10.3313139),
+  ];
+  List<LatLng> rue9 = const[
+    LatLng(36.8773557, 10.3289606),
+    LatLng(36.8760260, 10.3298612),
+  ];
+  List<LatLng> rue10 = const[
+    LatLng(36.8758477, 10.3299627),
+    LatLng(36.8747942, 10.3307379),
+  ];
+
+  List<LatLng> rue11 = const[
+    LatLng(36.8778736, 10.3285848),
+    LatLng(36.8784854, 10.3281238),
+  ];
+  List<LatLng> rue12 = const[
+    LatLng(36.8790716, 10.3275042),
+    LatLng(36.8770658, 10.3266328),
+  ];
+  List<LatLng> rue13 = const[
+    LatLng(36.8770537, 10.3266965),
+    LatLng(36.8789276, 10.3274948),
+  ];
+  List<LatLng> rue14 = const[
+    LatLng(36.8810846, 10.3269996),
+    LatLng(36.8821281, 10.3274157),
+  ];
+  List<LatLng> rue15 = const[
+    LatLng(36.8823255, 10.3274991),
+    LatLng(36.8829257, 10.3276933),
+  ];
+  List<LatLng> rue16 = const[
+    LatLng(36.8830643, 10.3277633),
+    LatLng(36.8833177, 10.3278562),
+  ];
+  List<LatLng> rue17 = const[
+    LatLng(36.8835001, 10.3279430),
+    LatLng(36.8843159, 10.328229),
+  ];
+  List<LatLng> rue18 = const[
+    LatLng(36.8853979, 10.3300456),
+    LatLng(36.8844800, 10.3319717),
+  ];
+  List<LatLng> rue19 = const[
+    LatLng(36.8838436, 10.3326399),
+    LatLng(36.8832129, 10.3331261),
+  ];
+  List<LatLng> rue20 = const[
+    LatLng(36.8820946, 10.3299577),
+    LatLng(36.8798759, 10.3286086),
+  ];
+
+
+  List<LatLng> rue21 = const[
+    LatLng(36.8756245, 10.3326979),
+    LatLng(36.8766053, 10.3362150),
+  ];
+  List<LatLng> rue22 = const[
+    LatLng(36.8826486, 10.3326054),
+    LatLng(36.8824062, 10.3322037),
+  ];
+  List<LatLng> rue23 = const[
+    LatLng(36.8823046, 10.3322896),
+    LatLng(36.8825904, 10.332696),
+  ];
+  List<LatLng> rue24 = const[
+    LatLng(36.8661505, 10.3354442),
+    LatLng(36.8636315, 10.3298628),
+  ];
+  List<LatLng> rue25 = const[
+    LatLng(36.8824869, 10.3343455),
+    LatLng(36.8831045, 10.3335217),
+  ];
+  List<LatLng> rue26 = const[
+    LatLng(36.8832810, 10.3335334),
+    LatLng(36.8834593, 10.3338234),
+  ];
+  List<LatLng> rue27 = const[
+    LatLng(36.8835119, 10.3339368),
+    LatLng(36.8835422, 10.3342026),
+  ];
+  List<LatLng> rue28 = const[
+  LatLng(36.8853805, 10.3328089),
+  LatLng(36.8867814, 10.3307158),
+  ];
+
   List<LatLng> polygonPointsMourouj = const[
     LatLng(36.857020, 10.181680),
     LatLng(36.851583, 10.183963),
@@ -133,6 +251,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       destination = pointLatLng;
       getPolyPoints();
 
+
+      //if the zone is supported so true
       List<map_tool.LatLng> convertedPolygonPoints = polygonPoints.map(
               (point) => map_tool.LatLng(point.latitude,point.longitude)
       ).toList();
@@ -140,6 +260,15 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           map_tool.LatLng(pointLatLng.latitude, pointLatLng.longitude),
           convertedPolygonPoints,
           false,
+      );
+
+      List<map_tool.LatLng> convertedPolygonPointsMarsa = polygonPointsMarsa.map(
+              (point) => map_tool.LatLng(point.latitude,point.longitude)
+      ).toList();
+      isSelectedArea = map_tool.PolygonUtil.containsLocation(
+        map_tool.LatLng(pointLatLng.latitude, pointLatLng.longitude),
+        convertedPolygonPointsMarsa,
+        false,
       );
     });
 
@@ -313,28 +442,28 @@ if(currentLocation != null){
               Polygon(
                 polygonId: const PolygonId("1"),
                 points: zone1,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("2"),
                 points: zone2,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("3"),
                 points: zone3,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("4"),
                 points: zone4,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
@@ -348,30 +477,234 @@ if(currentLocation != null){
               Polygon(
                 polygonId: const PolygonId("5"),
                 points: zone5,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("6"),
                 points: zone6,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("7"),
                 points: zone7,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
               ),
               Polygon(
                 polygonId: const PolygonId("8"),
                 points: zone8,
-                strokeWidth: 4,
+                strokeWidth: 2,
                 strokeColor: const Color(0xFF006491),
                 fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue1,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue2,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue3,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue4,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue5,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue6,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue7,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue8,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue9,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue10,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue11,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue12,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue13,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue14,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue15,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue16,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue17,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue18,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue19,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue20,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue21,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue22,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue23,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue24,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue25,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue26,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue27,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: rue28,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+
+              Polygon(
+                polygonId: const PolygonId("9"),
+                points: polygonPointsMourouj,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491).withOpacity(0.7),
+                fillColor: const Color(0xFF006491).withOpacity(0.3),
               ),
 
             },
@@ -418,6 +751,19 @@ if(currentLocation != null){
       String formattedTime = "$diff heurs";
       int total = diff * 3;
       String formattedPriceMsg = "$total DINAR";
+      String clientAddresse = "add";
+
+      var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=${destination.latitude},${destination.longitude}&key=AIzaSyBK7yNpCFJh1cnW2sgU3jup6qYO1Kbm8Ro';
+      var response = await http.get(Uri.parse(url));
+      var json = jsonDecode(response.body);
+      var address = json['results'][0]['formatted_address'];
+      setState(() {
+        clientAddresse = address;
+      });
+      print(clientAddresse);
+
+
+
 
       showDialog(
           context: context,
@@ -428,9 +774,9 @@ if(currentLocation != null){
                 child: ListBody(
                   children: <Widget>[
                     Row(
-                      children: const [
-                        Icon(Icons.location_city),
-                        Text("Rue foulen 2024"),
+                      children: [
+                        const Icon(Icons.location_city),
+                        Text(clientAddresse),
                       ],
                     ),
 
@@ -464,6 +810,7 @@ if(currentLocation != null){
                         Text('247 TN 9999'),
                       ],
                     ),
+
                   ],
                 ),
               ),
@@ -550,6 +897,8 @@ if(currentLocation != null){
                     title: const Text('Ariana'),
                     subtitle: const Text('Selection du cette zone'),
                     onTap: () async {
+                      destination = LatLng(arianaLocation.latitude, arianaLocation.longitude);
+                      checkUpdatedLocation( arianaLocation);
                       GoogleMapController googleMapController = await _controller.future;
                       googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
                           zoom: 15.5,
@@ -567,6 +916,8 @@ if(currentLocation != null){
                     title: Text('La Marsa'),
                     subtitle: Text('Selection du cette zone'),
                      onTap: () async {
+                      destination = LatLng(marsaLocation.latitude, marsaLocation.longitude);
+                      checkUpdatedLocation( marsaLocation);
                        GoogleMapController googleMapController = await _controller.future;
                        googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
                            zoom: 15.5,
