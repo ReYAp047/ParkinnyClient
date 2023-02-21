@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class GlobalVariables {
+  static String clientEmail = "";
+  static double clientWallet = 0;
+}
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -22,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
         email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
+      GlobalVariables.clientEmail = _controllerEmail.text;
+      GlobalVariables.clientWallet = 0;
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -35,6 +44,11 @@ class _LoginPageState extends State<LoginPage> {
         email: _controllerEmail.text,
         password: _controllerPassword.text,
       );
+      await Supabase.instance.client
+          .from('clientProfile_clientprofile')
+          .insert({'Nom_Client':"",'Email':_controllerEmail.text, 'Telephone':'', 'Solde_wallet':0});
+      GlobalVariables.clientEmail = _controllerEmail.text;
+      GlobalVariables.clientWallet = 0;
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;

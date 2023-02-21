@@ -1,5 +1,13 @@
+import 'dart:async';
+import 'package:parkinny/screen/order_traking_page.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'login_register_page.dart';
+
+List<Vehicle> _vehicles = [];
+TextEditingController _matGaucheController = TextEditingController();
+TextEditingController _matDroiteController = TextEditingController();
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
 
@@ -9,11 +17,96 @@ class WalletScreen extends StatefulWidget {
 
 }
 
+//POP UP Add
+class AddVehiclePopUp extends StatefulWidget {
+  final void Function(String vehicleName, String vehicleType) onVehicleAdded;
+
+  AddVehiclePopUp({required this.onVehicleAdded});
+  @override
+  _AddVehiclePopUpState createState() => _AddVehiclePopUpState();
+}
+
+class _AddVehiclePopUpState extends State<AddVehiclePopUp> {
+  final _formKey = GlobalKey<FormState>();
+  late String _matGauche;
+  late String _matDroite;
 
 
-class WalletWidget extends State<WalletScreen> {
+
 
   @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Vehicle'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              controller: _matGaucheController,
+              keyboardType: TextInputType.number,
+              maxLength: 3,
+              decoration: const InputDecoration(labelText: 'Immatriculation à gauche'),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Veuillez entrer la immatriculation ';
+                }
+                return null;
+              },
+              onSaved: (value) => _matGauche = value!,
+            ),
+            TextFormField(
+              controller: _matDroiteController,
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              decoration: const InputDecoration(labelText: 'Immatriculation à droite'),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Veuillez entrer la immatriculation';
+                }
+                return null;
+              },
+              onSaved: (value) => _matDroite = value!,
+            ),
+            const SizedBox(height: 16.0),
+            FloatingActionButton.extended(
+                label: const Text('Ajouter'),
+              backgroundColor: const Color(0xFF6184FF),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  // Use the _matGauche and _matDroite variables to add the vehicle to your app's data
+                  setState(() {
+                    _vehicles.add(Vehicle(
+                        matGauche: _matGaucheController.text,
+                        matDroite: _matDroiteController.text
+                    ));
+
+                  });
+                  Navigator.of(context).pop();
+
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+//END POP UP ADD
+
+class WalletWidget extends State<WalletScreen> {
+  String _text = "0";
+
+  TextEditingController _textController = TextEditingController();
+  late final String title;  final StreamController<List<Vehicle>> _vehiclesStreamController = StreamController<List<Vehicle>>();
+  @override
+  void dispose() {
+    _vehiclesStreamController.close();
+    super.dispose();
+  }
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
@@ -93,10 +186,10 @@ class WalletWidget extends State<WalletScreen> {
                       padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 20, 0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
-                        children: const [
+                        children: [
                           Text(
-                            '7,630 TND',
-                            style: TextStyle(
+                            '$_text TND',
+                            style: const TextStyle(
                               fontFamily: 'Outfit',
                               color: Colors.white,
                               fontSize: 32,
@@ -146,14 +239,15 @@ class WalletWidget extends State<WalletScreen> {
                   width: 200.0,
 
                   child: TextField(
-                    obscureText: true,
+                    obscureText: false,
+                    controller: _textController,
                     keyboardType: const TextInputType.numberWithOptions(),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
 
-                      labelText: '10',
+                      labelText: 'Montant a recharger',
                     ),
                   ),
                 ),
@@ -161,7 +255,16 @@ class WalletWidget extends State<WalletScreen> {
                 // Generated code for this Button Widget...
                 FloatingActionButton.extended(
                   onPressed: () {
-                    print('Button pressed ...');
+                    setState(()  {
+                      double deja = double.parse(_text);
+                      double newValue = double.parse(_textController.text);
+                      double tot = deja + newValue;
+                      String text = tot.toString();
+                      _text = text;
+                      GlobalVariables.clientWallet = tot;
+
+
+                    });
                   },
                   label: const Text('Recharger'),
                   backgroundColor: const Color(0xFF6184FF),
@@ -174,9 +277,9 @@ class WalletWidget extends State<WalletScreen> {
             ),
             const Padding(padding: EdgeInsets.all(12)),
             Row(
-              children: const [
-                Text(
-                  "Vehicule(s)",
+              children: [
+                const Text(
+                  "Vehicle(s)",
                   style: TextStyle(
                     fontFamily: 'Outfit',
                     color: Colors.black,
@@ -185,110 +288,151 @@ class WalletWidget extends State<WalletScreen> {
                   ),
                   textAlign: TextAlign.left,
                 ),
-                Spacer(),
-                Icon(
-                  Icons.add_circle_outline,
-                  color: Colors.black,
-                )
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AddVehiclePopUp(
+                        onVehicleAdded: (vehicleMatGauche, vehicleMatDroite) {
+                          // Add the new vehicle to the list
+                          setState(() {
+                           // _vehicles.add(Vehicle(matGauche: vehicleMatGauche, matDroite: vehicleMatDroite));
+                            //_vehiclesStreamController.add(_vehicles);
+                          });
+
+                        },
+                      ),
+                      );
+                    },
+                  ),
+
+
 
               ],
             ),
             const Padding(padding: EdgeInsets.all(5)),
-            Row(
-              children: [
-                Image.network(
-                  'https://res.cloudinary.com/dhncrtnjp/image/upload/v1670186771/Hybrid_car-rafiki_2_mmo02i.png',
-                  width: 80,
-                  height: 30,
-                  fit: BoxFit.cover,
-                ),
-                const Spacer(),
-                Container(
-                  width: 80,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Color(0x33000000),
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: const TextField(
-                    obscureText: true,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(
-                      label: Center(
-                        child: Text("247"),
-                      ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _vehicles.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        Image.network(
+                          'https://res.cloudinary.com/dhncrtnjp/image/upload/v1670186771/Hybrid_car-rafiki_2_mmo02i.png',
+                          width: 80,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        ),
+                        const Spacer(),
+                        Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 4,
+                                color: Color(0x33000000),
+                                offset: Offset(0, 2),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              _vehicles[index].matGauche,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          )
+                        ),
+                        const Spacer(),
+                        Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 4,
+                                color: Color(0x33000000),
+                                offset: Offset(0, 2),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: const TextField(
+                            enabled: false,
+                            obscureText: true,
+                            keyboardType: TextInputType.numberWithOptions(),
+                            decoration: InputDecoration(
+                              label: Center(
+                                child: Text("تونس", style: TextStyle(color: Colors.white),),
+                              ),
+
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          width: 80,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 4,
+                                color: Color(0x33000000),
+                                offset: Offset(0, 2),
+                              )
+                            ],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              _vehicles[index].matDroite,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          )
+                        ),
+                        const Spacer(),
+                         IconButton(
+                          icon: const Icon(Icons.delete),
+                          color: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              _vehicles.removeAt(index);
+                              _vehiclesStreamController.add(_vehicles);
+                            });
+                          },
+                        )
+                      ],
 
                     ),
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  width: 80,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Color(0x33000000),
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: const TextField(
-                    enabled: false,
-                    obscureText: true,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(
-                      label: Center(
-                        child: Text("تونس", style: TextStyle(color: Colors.white),),
-                      ),
+                  );
 
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  width: 80,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4,
-                        color: Color(0x33000000),
-                        offset: Offset(0, 2),
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: const TextField(
-                    obscureText: true,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(
-                      label: Center(
-                        child: Text("9999"),
-                      ),
-
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                const Icon(
-                  Icons.save_as_outlined,
-                  color: Colors.black,
-                )
-              ],
+                  /*ListTile(
+                          title: Text(_vehicles[index].matGauche),
+                          subtitle: Text(_vehicles[index].matDroite),
+                        );
+                        */
+                },
+              ),
             ),
+
             const Padding(padding: EdgeInsets.all(20)),
+
+
+
 
             /*
             Row(
@@ -355,6 +499,14 @@ class WalletWidget extends State<WalletScreen> {
     );
 
   }
+}
+
+
+class Vehicle {
+  final String matGauche;
+  final String matDroite;
+
+  Vehicle({required this.matGauche, required this.matDroite});
 }
 
 

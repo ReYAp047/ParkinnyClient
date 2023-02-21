@@ -10,6 +10,8 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import 'login_register_page.dart';
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
 
@@ -354,11 +356,11 @@ if(currentLocation != null){
     PointLatLng(destination.latitude, destination.longitude),
   );
   if(result.points.isNotEmpty) {
-   /* result.points.forEach(
+    result.points.forEach(
             (PointLatLng point)=>polylinecordinates.add(
             LatLng(point.latitude, point.longitude)
         )
-    );*/
+    );
     setState(() {});
   }
 }
@@ -367,8 +369,9 @@ if(currentLocation != null){
   @override
   void initState(){
     getCurrentLocation();
-    setCustomMarkerIcon();
     getPolyPoints();
+    setCustomMarkerIcon();
+
     super.initState();
   }
 
@@ -731,9 +734,10 @@ if(currentLocation != null){
     );
   }
   submitData(context) async {
+    final TimeOfDay currentTime = TimeOfDay.now();
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: const TimeOfDay(hour: 7, minute: 15),
+      initialTime: currentTime,
     );
     if(newTime != null){
       final now = DateTime.now();
@@ -749,23 +753,19 @@ if(currentLocation != null){
       String formattedMsgNewTime = "À: $timeUntil";
       int diff = difference.inHours.toInt()+1;
       String formattedTime = "$diff heurs";
-      int total = diff * 3;
+      double total = diff * 1.340;
       String formattedPriceMsg = "$total DINAR";
       String clientAddresse = "add";
 
-      var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=${destination.latitude},${destination.longitude}&key=AIzaSyBK7yNpCFJh1cnW2sgU3jup6qYO1Kbm8Ro';
+      var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=${destination.latitude},${destination.longitude}&key=AIzaSyAMQbRgwih4j8CJhFBzPqwvlHJmAVVahxI';
       var response = await http.get(Uri.parse(url));
       var json = jsonDecode(response.body);
       var address = json['results'][0]['formatted_address'];
-      setState(() {
+
         clientAddresse = address;
-      });
-      print(clientAddresse);
 
-
-
-
-      showDialog(
+      if(GlobalVariables.clientWallet>= total) {
+        showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
@@ -815,13 +815,6 @@ if(currentLocation != null){
                 ),
               ),
 
-
-
-
-
-
-
-
               actions: <Widget>[
 
                 TextButton(
@@ -850,10 +843,31 @@ if(currentLocation != null){
               ],
             );
           });
+      }else{
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Solde insuffisant'),
+              content: const Text('Votre solde n\'est pas suffisant pour cette action, merci de recharger votre wallet.'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+      }
 
 
 
     }
+
   }
 
   Widget searchBarUI(){
