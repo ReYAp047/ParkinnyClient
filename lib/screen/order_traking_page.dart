@@ -227,12 +227,43 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   LatLng(36.8867814, 10.3307158),
   ];
 
+
+  List<LatLng> polygonPointsNabeul = const[
+    LatLng(36.440859, 10.678588),
+
+    LatLng(36.451276, 10.701001),
+
+    LatLng(36.475311, 10.703990),
+
+    LatLng(36.468368, 10.733709),
+
+    LatLng(36.442848, 10.751729),
+
+    LatLng(36.428071, 10.689759),
+
+    LatLng(36.440874, 10.678401)
+  ];
+  List<LatLng> nb1 = const[
+    LatLng(36.442791,10.728936),
+    LatLng(36.443027,10.729633),
+  ];
+  List<LatLng> nb2 = const[
+    LatLng(36.442521, 10.727715),
+    LatLng(36.441794, 10.728072),
+  ];
+  List<LatLng> nb3 = const[
+    LatLng(36.442167, 10.729081),
+    LatLng(36.442842, 10.728761),
+  ];
+
+
   List<LatLng> polygonPointsMourouj = const[
     LatLng(36.857020, 10.181680),
     LatLng(36.851583, 10.183963),
     LatLng(36.857867, 10.190897),
     LatLng(36.861780, 10.187057),
     LatLng(36.860009, 10.181437),
+
   ];
 
 
@@ -245,6 +276,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   static const LatLng marsaLocation = LatLng(36.887706, 10.321401);
   bool ariana = true;
   static const LatLng arianaLocation = LatLng(36.858244, 10.184703);
+  bool nabeul = true;
+  static const LatLng nabeulLocation = LatLng(36.442167, 10.729081);
 
   void checkUpdatedLocation(LatLng pointLatLng) {
     setState(() {
@@ -264,12 +297,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           false,
       );
 
-      List<map_tool.LatLng> convertedPolygonPointsMarsa = polygonPointsMarsa.map(
+      List<map_tool.LatLng> convertedPolygonPointsNabeul = polygonPointsNabeul.map(
               (point) => map_tool.LatLng(point.latitude,point.longitude)
       ).toList();
       isSelectedArea = map_tool.PolygonUtil.containsLocation(
         map_tool.LatLng(pointLatLng.latitude, pointLatLng.longitude),
-        convertedPolygonPointsMarsa,
+        convertedPolygonPointsNabeul,
         false,
       );
     });
@@ -703,6 +736,37 @@ if(currentLocation != null){
               ),
 
               Polygon(
+                polygonId: const PolygonId("0"),
+                points: polygonPointsNabeul,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491).withOpacity(0.7),
+                fillColor: const Color(0xFF006491).withOpacity(0.3),
+              ),
+
+              Polygon(
+                polygonId: const PolygonId("6"),
+                points: nb1,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("7"),
+                points: nb2,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+              Polygon(
+                polygonId: const PolygonId("8"),
+                points: nb3,
+                strokeWidth: 2,
+                strokeColor: const Color(0xFF006491),
+                fillColor: const Color(0xFF006491),
+              ),
+
+
+              Polygon(
                 polygonId: const PolygonId("9"),
                 points: polygonPointsMourouj,
                 strokeWidth: 2,
@@ -903,7 +967,7 @@ if(currentLocation != null){
           child: Material(
             color: Colors.white,
             child: Container(
-              height: 200.0,
+              height: 300.0,
               color: Colors.white,
               child: Column(
                 children: [
@@ -941,6 +1005,22 @@ if(currentLocation != null){
                            )
                        )));
                      },
+                  ),
+                  ListTile(
+                    title: Text('Nabeul'),
+                    subtitle: Text('Selection du cette zone'),
+                    onTap: () async {
+                      destination = LatLng(nabeulLocation.latitude, nabeulLocation.longitude);
+                      checkUpdatedLocation( nabeulLocation);
+                      GoogleMapController googleMapController = await _controller.future;
+                      googleMapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                          zoom: 15.5,
+                          target: LatLng(
+                            nabeulLocation.latitude!,
+                            nabeulLocation.longitude!,
+                          )
+                      )));
+                    },
                   ),
                 ],
               ),
