@@ -7,6 +7,7 @@ class Auth {
   User? get currentUser => _firebaseAuth.currentUser;
    getConnectedUserEmail() {
     final currentUser = this.currentUser;
+    GlobalVariables.clientEmail = currentUser?.email ?? '';
     if (currentUser != null) {
       final String email = currentUser.email ?? '';
       GlobalVariables.clientEmail = email;
@@ -18,6 +19,7 @@ class Auth {
   Future<void> sendPasswordResetEmail({
     required String email,
   }) async {
+    GlobalVariables.clientEmail = email;
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
@@ -25,6 +27,7 @@ class Auth {
     required String email,
     required String password,
   }) async {
+    GlobalVariables.clientEmail = email;
     await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
@@ -35,6 +38,7 @@ class Auth {
     required String email,
     required String password,
   }) async {
+    GlobalVariables.clientEmail = email;
     await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,

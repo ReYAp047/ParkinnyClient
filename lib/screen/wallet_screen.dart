@@ -3,9 +3,12 @@ import 'package:parkinny/screen/order_traking_page.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'Model/user.dart' as GoToUser;
 import 'login_register_page.dart';
 
 List<Vehicle> _vehicles = [];
+StreamController<List<Vehicle>> _vehiclesStreamController = StreamController<List<Vehicle>>();
+
 TextEditingController _matGaucheController = TextEditingController();
 TextEditingController _matDroiteController = TextEditingController();
 class WalletScreen extends StatefulWidget {
@@ -19,6 +22,8 @@ class WalletScreen extends StatefulWidget {
 
 //POP UP Add
 class AddVehiclePopUp extends StatefulWidget {
+
+
   final void Function(String vehicleName, String vehicleType) onVehicleAdded;
 
   AddVehiclePopUp({required this.onVehicleAdded});
@@ -27,12 +32,10 @@ class AddVehiclePopUp extends StatefulWidget {
 }
 
 class _AddVehiclePopUpState extends State<AddVehiclePopUp> {
+
   final _formKey = GlobalKey<FormState>();
   late String _matGauche;
   late String _matDroite;
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +81,20 @@ class _AddVehiclePopUpState extends State<AddVehiclePopUp> {
                   _formKey.currentState!.save();
                   // Use the _matGauche and _matDroite variables to add the vehicle to your app's data
                   setState(() {
-                    _vehicles.add(Vehicle(
+                    GlobalVehicle.Vehicules.add(VehicleClass(
                         matGauche: _matGaucheController.text,
                         matDroite: _matDroiteController.text
                     ));
+
+                    setState(() {
+                      _vehicles.add(Vehicle(
+                          matGauche: _matGaucheController.text,
+                          matDroite: _matDroiteController.text
+                      ));
+                      _vehiclesStreamController.add(_vehicles);
+                    });
+
+
 
                   });
                   Navigator.of(context).pop();
@@ -98,10 +111,19 @@ class _AddVehiclePopUpState extends State<AddVehiclePopUp> {
 //END POP UP ADD
 
 class WalletWidget extends State<WalletScreen> {
-  String _text = "0";
+
+  String clientMail = GlobalVariables.clientEmail;
+
+  GoToUser.User user = GoToUser.User(email: GlobalVariables.clientEmail);
+  late var x = user.getSole(GlobalVariables.clientEmail);
+
+
+   String _text = GlobalVariables.clientWallet.toString();
 
   TextEditingController _textController = TextEditingController();
-  late final String title;  final StreamController<List<Vehicle>> _vehiclesStreamController = StreamController<List<Vehicle>>();
+  late String title;
+
+   StreamController<List<Vehicle>> _vehiclesStreamController = StreamController<List<Vehicle>>();
   @override
   void dispose() {
     _vehiclesStreamController.close();
@@ -204,8 +226,8 @@ class WalletWidget extends State<WalletScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children:  [
+                          const Text(
                             '**** ****',
                             style: TextStyle(
                               fontFamily: 'Roboto Mono',
@@ -215,8 +237,8 @@ class WalletWidget extends State<WalletScreen> {
                             ),
                           ),
                           Text(
-                            'foulen@gmail.com',
-                            style: TextStyle(
+                            clientMail,
+                            style: const TextStyle(
                               fontFamily: 'Roboto Mono',
                               color: Colors.white,
                               fontSize: 14,
@@ -262,7 +284,8 @@ class WalletWidget extends State<WalletScreen> {
                       String text = tot.toString();
                       _text = text;
                       GlobalVariables.clientWallet = tot;
-
+                      GoToUser.User objetClient = GoToUser.User(email : clientMail);
+                      objetClient.addSolde(tot, clientMail);
 
                     });
                   },
@@ -297,10 +320,16 @@ class WalletWidget extends State<WalletScreen> {
                       builder: (BuildContext context) => AddVehiclePopUp(
                         onVehicleAdded: (vehicleMatGauche, vehicleMatDroite) {
                           // Add the new vehicle to the list
-                          setState(() {
-                           // _vehicles.add(Vehicle(matGauche: vehicleMatGauche, matDroite: vehicleMatDroite));
-                            //_vehiclesStreamController.add(_vehicles);
-                          });
+
+                            _vehiclesStreamController.add(_vehicles);
+
+                            setState(() {
+                              _vehicles.add(Vehicle(matGauche: vehicleMatGauche, matDroite: vehicleMatDroite));
+                              //GlobalVehicle.Vehicules=_vehicles.cast<VehicleClass>();
+                              _vehiclesStreamController.add(_vehicles);
+                            });
+
+
 
                         },
                       ),
@@ -411,6 +440,7 @@ class WalletWidget extends State<WalletScreen> {
                           onPressed: () {
                             setState(() {
                               _vehicles.removeAt(index);
+                              GlobalVehicle.Vehicules.removeAt(index);
                               _vehiclesStreamController.add(_vehicles);
                             });
                           },

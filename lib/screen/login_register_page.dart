@@ -3,9 +3,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../auth.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+class Reservation {
+  String address;
+  String date;
+  String time;
+  double price;
+  String matricule;
+
+  Reservation({
+    required this.address,
+    required this.date,
+    required this.time,
+    required this.price,
+    required this.matricule,
+  });
+}
+
 class GlobalVariables {
-  static String clientEmail = "";
+  static String clientEmail = '';
   static double clientWallet = 0;
+  static List<Reservation> reservations = [];
+
+}
+
+class VehicleClass {
+   String matGauche;
+   String matDroite;
+
+  VehicleClass({required this.matGauche, required this.matDroite});
+}
+class GlobalVehicle {
+  static List<VehicleClass> Vehicules = [];
+
 }
 
 

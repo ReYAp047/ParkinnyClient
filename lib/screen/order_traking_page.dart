@@ -10,8 +10,11 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'Model/user.dart'as GoToUser;
 
 import 'login_register_page.dart';
+String carNumber = "No vehicle is selected";
+VehicleClass? selectedVehicle;
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
 
@@ -320,6 +323,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             );
 
     GoogleMapController googleMapController = await _controller.future;
+
 
     if(follow){
       followCurrentLocation(location, googleMapController );
@@ -815,13 +819,23 @@ if(currentLocation != null){
 
       String formattedMsgDate = "De: $time";
       String formattedMsgNewTime = "À: $timeUntil";
+
+      String formattedDateBD =  "$time";
+      String formattedNewTimeBD = "$timeUntil";
+
       int diff = difference.inHours.toInt()+1;
       String formattedTime = "$diff heurs";
       double total = diff * 1.340;
-      String formattedPriceMsg = "$total DINAR";
+      String totalWithThree = total.toStringAsFixed(3); // Formats the double value to a string with 3 decimal places
+      String totalRes = totalWithThree.substring(0, 5); // Extracts the first 5 characters (before the decimal point plus the 3 decimal places)
+
+
+      String formattedPriceMsg = "$totalRes TND";
       String clientAddresse = "add";
 
-      var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=${destination.latitude},${destination.longitude}&key=AIzaSyAMQbRgwih4j8CJhFBzPqwvlHJmAVVahxI';
+
+
+      var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=${destination.latitude},${destination.longitude}&key=AIzaSyDBs82vYjQZiM3uErBvZSEhcSXcQwEP24U';
       var response = await http.get(Uri.parse(url));
       var json = jsonDecode(response.body);
       var address = json['results'][0]['formatted_address'];
@@ -829,6 +843,17 @@ if(currentLocation != null){
         clientAddresse = address;
 
       if(GlobalVariables.clientWallet>= total) {
+
+        String matricule = "";
+// Create a list of dropdown menu items from the vehicles in GlobalVehicle.Vehicules
+        List<DropdownMenuItem<VehicleClass>> dropdownItems =
+        GlobalVehicle.Vehicules.map((vehicle) {
+          return DropdownMenuItem<VehicleClass>(
+            value: vehicle,
+            child: Text('${vehicle.matGauche} TN ${vehicle.matDroite}'),
+          );
+        }).toList();
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -868,10 +893,26 @@ if(currentLocation != null){
                         Text(formattedPriceMsg),
                       ],
                     ),
-                    Row(
-                      children: const [
-                        Icon(Icons.car_crash),
-                        Text('247 TN 9999'),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DropdownButton<VehicleClass>(
+                          value: selectedVehicle,
+                          items: GlobalVehicle.Vehicules.map((vehicle) {
+                            return DropdownMenuItem<VehicleClass>(
+                              value: vehicle,
+                              child: Text("${vehicle.matGauche} TN ${vehicle.matDroite}"),
+                            );
+                          }).toList(),
+                          onChanged: (selectedValue) {
+                            setState(() {
+                              carNumber= "${selectedValue?.matGauche} TN ${selectedValue?.matDroite}";
+                              selectedVehicle = selectedValue;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Text(carNumber),
                       ],
                     ),
 
@@ -889,7 +930,7 @@ if(currentLocation != null){
                 ),
                 TextButton(
                   child: const Text('Valider'),
-                  onPressed: () {
+                  onPressed: ()  async {
                     Fluttertoast.showToast(
                         msg: "Réservation effectué avec succes",
                         toastLength: Toast.LENGTH_SHORT,
@@ -899,6 +940,30 @@ if(currentLocation != null){
                         textColor: Colors.white,
                         fontSize: 16.0
                     );
+
+
+                    final newReservation = Reservation(
+                      address: clientAddresse,
+                      date: formattedDate,
+                      time: formattedTime,
+                      price: total,
+                      matricule: carNumber,
+
+                    );
+
+
+                    String email = GlobalVariables.clientEmail;
+                    String address = clientAddresse;
+                    String date = formattedDate;
+                    String time = formattedTime;
+                    String mat = "${selectedVehicle!.matGauche} TN ${selectedVehicle!.matDroite}";
+
+                    final objetClient = GoToUser.User(email : GlobalVariables.clientEmail);
+                    objetClient.addReservation(email, address, date, time, total, mat, formattedNewTimeBD, formattedDateBD);
+
+
+                    GlobalVariables.reservations.add(newReservation);
+                    print(GlobalVariables.reservations[0].address);
                     follow = true;
                     getCurrentLocation();
                     Navigator.of(context).pop();

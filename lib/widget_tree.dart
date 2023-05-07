@@ -18,7 +18,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       stream: Auth().authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-
+          GlobalVariables.clientEmail = snapshot.data?.email ?? '';
          // return OrderTrackingPage();
           return bottom_Navigation();
         } else {
